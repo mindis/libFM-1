@@ -66,7 +66,6 @@ class Data {
 		bool has_xt;
 		bool has_x;
 
-		std::ofstream log;
 	public:	
 		Data(uint64 cache_size, bool has_x, bool has_xt) { 
 			this->data_t = NULL;
@@ -74,11 +73,6 @@ class Data {
 			this->cache_size = cache_size;
 			this->has_x = has_x;
 			this->has_xt = has_xt;
-
-			log.open("log.txt", std::ios::out | std::ios::trunc);
-		}
-		~Data() {
-			log.close();
 		}
 
 		LargeSparseMatrix<DATA_FLOAT>* data_t;
@@ -163,6 +157,7 @@ void Data::loadDataMetaInfo(istream* input)
 	num_feature = 0;
 	int num_rows = 0;
 	uint64 num_values = 0;
+
 	std::cout << "Waiting for next values: " << std::endl
 			  << "min target, size = " 			 << sizeof(min_target) 	<< " byte(s)," << std::endl
 			  << "max target, size = " 			 << sizeof(max_target) 	<< " byte(s)," << std::endl
@@ -170,12 +165,11 @@ void Data::loadDataMetaInfo(istream* input)
 			  << "dataset rows, size = " 		 << sizeof(num_rows) 	<< " byte(s)," << std::endl
 			  << "nonzero values count, size = " << sizeof(num_values) 	<< " byte(s)." << std::endl;
 
-
-	input->read(reinterpret_cast<char*>(&min_target), sizeof(min_target));
-	input->read(reinterpret_cast<char*>(&max_target), sizeof(max_target));
-	input->read(reinterpret_cast<char*>(&num_feature), sizeof(num_feature));
-	input->read(reinterpret_cast<char*>(&num_rows), sizeof(num_rows));
-	input->read(reinterpret_cast<char*>(&num_values), sizeof(num_values));
+	*input >> min_target
+		   >> max_target
+		   >> num_feature
+		   >> num_rows
+		   >> num_values;
 
 	std::cout << "Values:" << std::endl;
 	std::cout << "min target = "  << min_target  << std::endl
@@ -261,10 +255,8 @@ void Data::loadData(istream* input)
 		DATA_FLOAT _value;
 		int nchar, _feature;
 		while (row_id < num_rows) {
-			log << row_id << std::endl;
 			std::string line;
 			std::getline(*input, line);
-			log << line << std::endl;
 			const char *pline = line.c_str();
 			while ((*pline == ' ') || (*pline == 9)) {
 				pline++;
@@ -281,7 +273,6 @@ void Data::loadData(istream* input)
 
 				while (sscanf(pline, "%d:%f%n", &_feature, &_value, &nchar) >= 2) {
 					pline += nchar;
-					log << cache_id << std::endl;
 					assert(cache_id < num_values);
 					cache[cache_id].id = _feature;
 					cache[cache_id].value = _value;
