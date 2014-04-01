@@ -8,7 +8,7 @@ OBJECTS := \
 all: libFM transpose convert
 
 libFM: libfm.o
-	g++ -O3 -Wall libfm.o -o $(BIN_DIR)libFM
+	g++ -O3 -Wall libfm.o -o $(BIN_DIR)libfm
 
 %.o: %.cpp
 	g++ -O3 -Wall -c $< -o $@
