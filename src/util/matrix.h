@@ -266,7 +266,10 @@ template <typename T> class DVector {
 
 		void saveToStream(ostream* out) {
 			for (uint i = 0; i < dim; i++) {
-				*out << value[i] << "\t";
+				if (i > 0) {
+					*out << "\t";
+				}
+				*out << value[i];
 			}
 			*out << std::endl;
 		}
