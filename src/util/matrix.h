@@ -127,17 +127,20 @@ template <typename T> class DMatrix {
 				*out << std::endl;
 			}
    			for (uint i_1 = 0; i_1 < dim1; i_1++) {
+				if (i_1 > 0) {
+					if (one_row) 
+						*out << "\t";
+					else
+						*out << std::endl;	
+				}
    				for (uint i_2 = 0; i_2 < dim2; i_2++) {
 					if (i_2 > 0) {
 						*out << "\t";
 					}
 					*out << value[i_1][i_2];
 				}
-   				if (one_row)
-   					*out << "\t";
-   				else
-   					*out << std::endl;
 			}
+   			*out << std::endl;
    		}
 
    		void saveToFile(std::string filename, bool one_row, bool has_header = false) {
